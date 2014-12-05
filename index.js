@@ -122,12 +122,8 @@ rpc.prototype._makeExchange = function(cb) {
     var $this = this;
 
     this.__exchangeCbs.push(cb);
-  /*
-   * Added option autoDelete=false.
-   * Otherwise we had an error in library node-amqp version > 0.1.7.
-   * Text of such error: "PRECONDITION_FAILED - cannot redeclare exchange '<exchange name>' in vhost '/' with different type, durable, internal or autodelete value"
-   */
-    this.__exchange = this.__conn.exchange(this.__exchange_name, { autoDelete: false }, function(exchange)    {
+  
+    this.__exchange = this.__conn.exchange(this.__exchange_name, this.__exchange_options, function(exchange)    {
         debug('Exchange ' + exchange.name + ' is open');
         var cbs = $this.__exchangeCbs;
         $this.__exchangeCbs = [];
@@ -322,7 +318,9 @@ rpc.prototype.on = function(cmd, cb, context, options)    {
                     return cb.call(context, message, function(err, data)   {
 
                         var options = {
-                            correlationId: deliveryInfo.correlationId
+                            correlationId: deliveryInfo.correlationId,
+                            mandatory: true,
+                            immediation: true
                         }
 
                         $this.__exchange.publish(
