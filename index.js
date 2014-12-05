@@ -1,5 +1,7 @@
 
 
+var util = require('util')
+var EventEmitter = require('events').EventEmitter
 var amqp = require('amqp');
 var uuid = require('node-uuid').v4;
 var os   = require('os');
@@ -27,7 +29,11 @@ function rpc(opt)   {
 
     this.__connCbs = [];
     this.__exchangeCbs = [];
+    
+    EventEmitter.call(this)
 }
+
+util.inherits(rpc, EventEmitter)
 
 /**
  * generate unique name for new queue
@@ -442,6 +448,11 @@ rpc.prototype.onBroadcast = function (cmd, cb, context, options) {
  */
 
 rpc.prototype.offBroadcast = rpc.prototype.off;
+
+var onEvent = EventEmitter.prototype.on
+rpc.prototype.onEvent = function(event) {
+    return onEvent.apply(this, arguments)
+}
 
 
 module.exports.amqpRPC = rpc;
