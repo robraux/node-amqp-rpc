@@ -79,6 +79,10 @@ rpc.prototype._connect = function(cb)  {
           cbs[i]($this.__conn);
       }
     });
+    
+    this.__conn.addListener('close', function() {
+      $this.emit('close')
+    })
 }
 /**
  * disconnect from MQ broker
