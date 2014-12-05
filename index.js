@@ -41,7 +41,7 @@ util.inherits(rpc, EventEmitter)
  */
 
 rpc.prototype.generateQueueName = function(type)    {
-    return /*'njsListener:' +*/ os.hostname() + ':pid' + process.pid + ':' + type;
+    return uuid();
 }
 
 
